@@ -46,8 +46,9 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
   int err = s21_matrix_is_valid(A);
   (!err && (*A).rows != (*A).columns) ? err = 2 : 0;
-  (!err && result) ? err = s21_create_matrix((*A).rows, (*A).columns, result)
-                   : (err = 1);
+  (!err) ? result ? err = s21_create_matrix((*A).rows, (*A).columns, result)
+                  : (err = 1)
+         : 0;
   if (!err) {
     for (int i = 0; i < (*A).rows && !err; ++i) {
       for (int j = 0; j < (*A).columns && !err; ++j) {
@@ -68,10 +69,10 @@ int s21_determinant(matrix_t *A, double *result) {
               *(*(*A).matrix + 1) * **((*A).matrix + 1);
   } else if ((*A).rows == 3) {
     *result =
-        **(*A).matrix * *(*((*A).matrix + 1) + 1) * *(*((*A).matrix + 2) + 2) -
-        *(*(*A).matrix + 2) * *(*((*A).matrix + 1) + 1) * **((*A).matrix + 2) +
+        **(*A).matrix * *(*((*A).matrix + 1) + 1) * *(*((*A).matrix + 2) + 2) +
         *(*(*A).matrix + 1) * *(*((*A).matrix + 1) + 2) * **((*A).matrix + 2) +
         *(*(*A).matrix + 2) * *(*((*A).matrix + 2) + 1) * **((*A).matrix + 1) -
+        *(*(*A).matrix + 2) * *(*((*A).matrix + 1) + 1) * **((*A).matrix + 2) -
         **(*A).matrix * *(*((*A).matrix + 1) + 2) * *(*((*A).matrix + 2) + 1) -
         *(*(*A).matrix + 1) * *(*((*A).matrix + 2) + 2) * **((*A).matrix + 1);
   } else {
@@ -82,7 +83,7 @@ int s21_determinant(matrix_t *A, double *result) {
       err = s21_matrix_minor(A, &minor, 0, j);
       if (!err) {
         err = s21_determinant(&minor, &tmp);
-        !err ? *result += *(*(*A).matrix + j) * tmp * (j % 2 ? -1 : 0) : 0;
+        !err ? *result += *(*(*A).matrix + j) * tmp * (j % 2 ? -1 : 1) : 0;
         s21_remove_matrix(&minor);
       }
     }

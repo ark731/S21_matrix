@@ -1,5 +1,7 @@
 #include "s21_matrix_common.h"
 
+#include <math.h>
+
 #include "s21_matrix.h"
 
 #define SUCCESS 1

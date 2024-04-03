@@ -23,7 +23,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
       (*result).columns = columns;
     }
   }
-  err ? s21_remove_matrix(result) : 0;
+  if (err) s21_remove_matrix(result);
   return err;
 }
 
