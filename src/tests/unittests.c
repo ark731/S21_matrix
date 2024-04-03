@@ -149,6 +149,48 @@ START_TEST(s21_calc_complements6) {
 }
 END_TEST
 
+START_TEST(s21_calc_complements7) {
+  matrix_t expected = {0};
+  matrix_t m = {0};
+  matrix_t result = {0};
+  int code1 = s21_create_matrix(3, 3, &m);
+  int code2 = s21_create_matrix(3, 3, &expected);
+  if (code1 && code2) {
+    m.matrix[0][0] = 1;
+    m.matrix[0][1] = 2;
+    m.matrix[0][2] = 3;
+
+    m.matrix[1][0] = 0;
+    m.matrix[1][1] = 4;
+    m.matrix[1][2] = 2;
+
+    m.matrix[2][0] = 5;
+    m.matrix[2][1] = 2;
+    m.matrix[2][2] = 1;
+
+    expected.matrix[0][0] = 0;
+    expected.matrix[0][1] = 10;
+    expected.matrix[0][2] = -20;
+
+    expected.matrix[1][0] = 4;
+    expected.matrix[1][1] = -14;
+    expected.matrix[1][2] = 8;
+
+    expected.matrix[2][0] = -8;
+    expected.matrix[2][1] = -2;
+    expected.matrix[2][2] = 4;
+
+    int code = s21_calc_complements(&m, &result);
+
+    ck_assert_int_eq(s21_eq_matrix(&result, &expected), 1);
+    ck_assert_int_eq(code, 0);
+    s21_remove_matrix(&m);
+    s21_remove_matrix(&result);
+    s21_remove_matrix(&expected);
+  }
+}
+END_TEST
+
 START_TEST(s21_determinant1) {
   int rows = 1;
   int columns = 1;
@@ -287,7 +329,7 @@ START_TEST(s21_determinant8) {
   matrix.matrix[2][2] = 10;
   double res;
   int ret = s21_determinant(&matrix, &res);
-  ck_assert_uint_eq(res, -3);
+  ck_assert_double_eq(res, -3.);
   ck_assert_int_eq(ret, 0);
   s21_remove_matrix(&matrix);
 }
@@ -304,6 +346,32 @@ START_TEST(s21_eq_matrix1) {
   ck_assert_int_eq(FAILURE, ret);
   s21_remove_matrix(&M);
   s21_remove_matrix(&N);
+}
+END_TEST
+
+START_TEST(s21_eq_matrix2) {
+  matrix_t m = {0};
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  s21_create_matrix(rows, cols, &m);
+  matrix_t mtx = {0};
+  const int rows1 = rand() % 100 + 1;
+  const int cols1 = rand() % 100 + 1;
+  s21_create_matrix(rows1, cols1, &mtx);
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      m.matrix[i][j] = rand() + 1;
+    }
+  }
+  for (int i = 0; i < rows1; i++) {
+    for (int j = 0; j < cols1; j++) {
+      mtx.matrix[i][j] = rand();
+    }
+  }
+  ck_assert_int_eq(s21_eq_matrix(&m, &mtx), 0);
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&mtx);
 }
 END_TEST
 
@@ -982,7 +1050,11 @@ START_TEST(s21_transpose_matrix4) {
   s21_remove_matrix(&mat_1);
   s21_remove_matrix(&res_mat);
   s21_remove_matrix(&res_org);
+}
+END_TEST
 
+START_TEST(s21_transpose_matrix5) {
+  matrix_t mat_1, res_mat, res_org;
   double matrix[2][2] = {
       {1, 2},
       {3, 4},
@@ -1000,13 +1072,33 @@ START_TEST(s21_transpose_matrix4) {
       res_org.matrix[i][j] = res[i][j];
     }
   }
-  ret = s21_transpose(&mat_1, &res_mat);
+  int ret = s21_transpose(&mat_1, &res_mat);
   ck_assert_int_eq(ret, 0);
   ret = s21_eq_matrix(&res_mat, &res_org);
   ck_assert_int_eq(ret, 1);
   s21_remove_matrix(&mat_1);
   s21_remove_matrix(&res_mat);
   s21_remove_matrix(&res_org);
+}
+END_TEST
+
+START_TEST(s21_transpose_matrix6) {
+  matrix_t matrix, res_mat;
+  s21_create_matrix(2, 2, &matrix);
+  matrix.matrix[0][1] = NAN;
+  int ret = s21_transpose(&matrix, &res_mat);
+  ck_assert_int_eq(ret, 1);
+  s21_remove_matrix(&matrix);
+}
+END_TEST
+
+START_TEST(s21_transpose_matrix7) {
+  matrix_t matrix, res_mat;
+  s21_create_matrix(2, 2, &matrix);
+  matrix.matrix[0][1] = INFINITY;
+  int ret = s21_transpose(&matrix, &res_mat);
+  ck_assert_int_eq(ret, 1);
+  s21_remove_matrix(&matrix);
 }
 END_TEST
 
@@ -1039,6 +1131,7 @@ int main(void) {
   tcase_add_test(tc1_1, s21_calc_complements4);
   tcase_add_test(tc1_1, s21_calc_complements5);
   tcase_add_test(tc1_1, s21_calc_complements6);
+  tcase_add_test(tc1_1, s21_calc_complements7);
   suite_add_tcase(s2, tc2_1);
   tcase_add_test(tc2_1, s21_determinant1);
   tcase_add_test(tc2_1, s21_determinant2);
@@ -1050,6 +1143,7 @@ int main(void) {
   tcase_add_test(tc2_1, s21_determinant8);
   suite_add_tcase(s3, tc3_1);
   tcase_add_test(tc3_1, s21_eq_matrix1);
+  tcase_add_test(tc3_1, s21_eq_matrix2);
   suite_add_tcase(s4, tc4_1);
   tcase_add_test(tc4_1, s21_inverse_matrix1);
   tcase_add_test(tc4_1, s21_inverse_matrix2);
@@ -1086,6 +1180,9 @@ int main(void) {
   tcase_add_test(tc9_1, s21_transpose_matrix2);
   tcase_add_test(tc9_1, s21_transpose_matrix3);
   tcase_add_test(tc9_1, s21_transpose_matrix4);
+  tcase_add_test(tc9_1, s21_transpose_matrix5);
+  tcase_add_test(tc9_1, s21_transpose_matrix6);
+  tcase_add_test(tc9_1, s21_transpose_matrix7);
 
   srunner_add_suite(sr, s2);
   srunner_add_suite(sr, s3);

@@ -124,6 +124,6 @@
   matrix.matrix[2][2] = 10;
   double res;
   int ret = s21_determinant(&matrix, &res);
-  ck_assert_uint_eq(res, -3);
+  ck_assert_double_eq(res, -3.);
   ck_assert_int_eq(ret, 0);
   s21_remove_matrix(&matrix);

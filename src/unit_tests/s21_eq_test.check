@@ -11,3 +11,27 @@
   ck_assert_int_eq(FAILURE, ret);
   s21_remove_matrix(&M);
   s21_remove_matrix(&N);
+
+#test s21_eq_matrix2
+  matrix_t m = {0};
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  s21_create_matrix(rows, cols, &m);
+  matrix_t mtx = {0};
+  const int rows1 = rand() % 100 + 1;
+  const int cols1 = rand() % 100 + 1;
+  s21_create_matrix(rows1, cols1, &mtx);
+
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      m.matrix[i][j] = rand() + 1;
+    }
+  }
+  for (int i = 0; i < rows1; i++) {
+    for (int j = 0; j < cols1; j++) {
+      mtx.matrix[i][j] = rand();
+    }
+  }
+  ck_assert_int_eq(s21_eq_matrix(&m, &mtx), 0);
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&mtx);

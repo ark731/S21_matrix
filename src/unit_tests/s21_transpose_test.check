@@ -77,6 +77,8 @@
   s21_remove_matrix(&res_mat);
   s21_remove_matrix(&res_org);
 
+#test s21_transpose_matrix5
+ matrix_t mat_1, res_mat, res_org;
   double matrix[2][2] = {
       {1, 2},
       {3, 4},
@@ -94,10 +96,27 @@
       res_org.matrix[i][j] = res[i][j];
     }
   }
-  ret = s21_transpose(&mat_1, &res_mat);
+  int ret = s21_transpose(&mat_1, &res_mat);
   ck_assert_int_eq(ret, 0);
   ret = s21_eq_matrix(&res_mat, &res_org);
   ck_assert_int_eq(ret, 1);
   s21_remove_matrix(&mat_1);
   s21_remove_matrix(&res_mat);
   s21_remove_matrix(&res_org);
+
+#test s21_transpose_matrix6
+  matrix_t matrix, res_mat;
+  s21_create_matrix(2, 2, &matrix);
+  matrix.matrix[0][1] = NAN;
+  int ret = s21_transpose(&matrix, &res_mat);
+  ck_assert_int_eq(ret, 1);
+  s21_remove_matrix(&matrix);
+
+
+#test s21_transpose_matrix7
+  matrix_t matrix, res_mat;
+  s21_create_matrix(2, 2, &matrix);
+  matrix.matrix[0][1] = INFINITY;
+  int ret = s21_transpose(&matrix, &res_mat);
+  ck_assert_int_eq(ret, 1);
+  s21_remove_matrix(&matrix);

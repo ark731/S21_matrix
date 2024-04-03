@@ -88,20 +88,19 @@ rebuild:
 #  ///////////////////  DEPENDENCIES  ////////////////////
 installdeps:
 ifeq ($(shell uname -s), Linux)
-		sudo apt-get install doxygen pkg-config graphviz check gcovr -y
+		sudo apt-get install pkg-config graphviz check checkmk gcovr -y
 endif
 ifeq ($(shell uname -s), Darwin)
-		brew install doxygen pkg-config graphviz check gcovr
+		brew install pkg-config graphviz check checkmk gcovr
 endif
 
 
 #  /////////////////////  EXTRAS  //////////////////////
-.PHONY: all clean check rebuild run external installdeps 
+.PHONY: all clean rebuild run installdeps 
 
 
 #  /////////////////////  INCLUDES  //////////////////////
 include makefiles/assemble_tests.mk
-include makefiles/documentation_lib.mk
 include makefiles/gcov_lib.mk
 include makefiles/linters.mk
 include makefiles/valgrind.mk

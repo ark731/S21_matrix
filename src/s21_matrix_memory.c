@@ -2,14 +2,15 @@
 
 #include "s21_matrix.h"
 
+/* Constructor.*/
 int s21_create_matrix(int rows, int columns, matrix_t *result) {
   int err = 0;
   if (!result) {
     err = 1;
   } else if (rows < 1 || columns < 1) {
     err = 1;
-    (*result).rows = 0;
-    (*result).columns = 0;
+    (*result).rows = 0;     // initialize these so that external functions
+    (*result).columns = 0;  // know of error
   } else {
     (*result).matrix = calloc(rows, sizeof(double *));
     if (!(*result).matrix) {
@@ -27,6 +28,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   return err;
 }
 
+/* Destructor. */
 void s21_remove_matrix(matrix_t *A) {
   if (A) {
     if ((*A).matrix) {
