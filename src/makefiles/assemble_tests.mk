@@ -8,12 +8,13 @@ CHECK_FILES=$(filter-out $(CHECK_INCLUDES), $(wildcard unit_tests/*.check))
 
 #  ////////////////////  OS CHECK  ////////////////////
 unittests_nofork: unittests
-ifeq ($(UNAME),Linux)
-	sed -i 's/runner_run_all/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' tests/$^.c
+ifeq ($(shell uname -s), Linux)
+	sed -i 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' tests/$^.c
 endif
-ifeq ($(UNAME),Darwin)
-	sed -i '' 's/runner_run_all/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' tests/$^.c
+ifeq ($(shell uname -s), Darwin)
+	sed -i '' 's/\bsrunner_run_all\b/srunner_set_fork_status(sr, CK_NOFORK);\n\n srunner_run_all/' tests/$^.c
 endif
+	clang-format -i -style=Google tests/$^.c
 
 #  ////////////////////  TARGETS  /////////////////////
 

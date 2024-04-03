@@ -1193,6 +1193,8 @@ int main(void) {
   srunner_add_suite(sr, s8);
   srunner_add_suite(sr, s9);
 
+  srunner_set_fork_status(sr, CK_NOFORK);
+
   srunner_run_all(sr, CK_ENV);
   nf = srunner_ntests_failed(sr);
   srunner_free(sr);
