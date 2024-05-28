@@ -103,7 +103,6 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     double det;
     err = s21_determinant(A, &det);
     (det == 0.) ? err = 2 : 0;  // check for division by 0
-    !err ? err = s21_create_matrix((*A).rows, (*A).columns, result) : 0;
     if (!err && (*A).rows == 1) {  // special case for size 1 matrix
       **(*result).matrix = 1.0 / det;
     } else if (!err) {
@@ -112,9 +111,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
       if (!err) {
         s21_transpose(&tmp, &tmp2);
         err = s21_mult_number(&tmp2, 1 / det, result);
-        s21_remove_matrix(&tmp);
         s21_remove_matrix(&tmp2);
       }
+      s21_remove_matrix(&tmp);
     }
   }
   return err;
