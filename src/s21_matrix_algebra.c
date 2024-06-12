@@ -18,8 +18,9 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
     err = SUCCESS;
     for (int i = 0; i < (*A).rows; ++i) {       // go through each cell and
       for (int j = 0; j < (*A).columns; ++j) {  // compare difference to EPS
-        if (fabs(*(*((*A).matrix + i) + j) - *(*((*B).matrix + i) + j)) >=
-            S21_EPS) {
+        if ((fabs(*(*((*A).matrix + i) + j) - *(*((*B).matrix + i) + j)) /
+             fmax(fabs(*(*((*A).matrix + i) + j)),
+                  fabs(*(*((*B).matrix + i) + j)))) >= S21_EPS) {
           err = FAILURE;
           i = (*A).rows;
           j = (*A).columns;
